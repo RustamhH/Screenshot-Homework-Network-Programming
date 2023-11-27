@@ -26,31 +26,7 @@ namespace UdpClient
 
 
 
-            Task.Run(() =>
-            {
-                var listener = new Socket(AddressFamily.InterNetwork,
-                          SocketType.Dgram,
-                          ProtocolType.Udp);
-
-
-                var Ip = IPAddress.Parse("192.168.100.8");
-                var Port = 54709;
-
-                var listenerEP = new IPEndPoint(Ip, Port);
-
-                listener.Bind(listenerEP);
-
-                var msg = "";
-                var len = 0;
-                var buffer = new byte[ushort.MaxValue - 29];
-
-
-                EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-                listener.ReceiveFrom(buffer,ref remoteEP);
-
-                
-            }); 
-
+            
 
         }
 

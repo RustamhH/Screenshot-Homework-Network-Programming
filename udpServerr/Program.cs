@@ -97,23 +97,7 @@ namespace udpServerr
             msg = Encoding.Default.GetString(buffer, 0, len);
             if(msg=="Salam")
             {
-                Bitmap image =CaptureAndSaveScreenshot();
-                using MemoryStream memoryStream = new MemoryStream();
-                image.Save(memoryStream, ImageFormat.Png);
-                byte[] imageinbytes= memoryStream.ToArray();
-                
-                var client = new Socket(AddressFamily.InterNetwork,
-                           SocketType.Dgram,
-                           ProtocolType.Udp);
-
-
-
-
-                
-                var serverEndPoint = new IPEndPoint(Ip, Port);
-
-                client.SendTo(imageinbytes,serverEndPoint);
-
+                Bitmap image = CaptureAndSaveScreenshot();
             }
             Console.WriteLine($"{remoteEP} : {msg}");
             
