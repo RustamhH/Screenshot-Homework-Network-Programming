@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "7yGSNIa7/jrp0wKHCaQNx0jZYcyFn5y/QSt6+3PiZEOPmL+px2dwcFw02FPJUN3rfZvnfHXpGycmQNW7cDeeTQ==",
+  "success": true,
+  "projectFilePath": "D:\\Network Programming\\UDP Homework\\udpServerr\\udpServerr.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\RustamH\\.nuget\\packages\\analytics\\3.8.1\\analytics.3.8.1.nupkg.sha512",
+    "C:\\Users\\RustamH\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\5.0.0\\microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "C:\\Users\\RustamH\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
+    "C:\\Users\\RustamH\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\RustamH\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
