@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace udpServerr
 {
@@ -33,29 +34,38 @@ namespace udpServerr
         }
 
 
-        static Bitmap CaptureAndSaveScreenshot()
+        static byte[] CaptureAndSaveScreenshot()
         {
             IntPtr handle = GetForegroundWindow();
 
             if (GetWindowRect(handle, out RECT rect))
             {
-                int width = rect.Right - rect.Left;
-                int height = rect.Bottom - rect.Top;
+                int width = 1920;
+                int height = 1080;
 
                 using (Bitmap bmp = new Bitmap(width, height))
                 {
                     using (Graphics g = Graphics.FromImage(bmp))
                     {
-                        g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(width, height));
+                        g.CopyFromScreen(0,0, 0, 0, new System.Drawing.Size(width, height));
                     }
 
                     if (File.Exists("last index.txt")) imagecounter = Convert.ToInt32(File.ReadAllText("last index.txt"));
                     string fileName = $@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}/{di.Name}/Screenshot_{++imagecounter}.png";
+                    
 
-                    bmp.Save(fileName, ImageFormat.Png);
-                    File.WriteAllText("last index.txt", imagecounter.ToString());
 
-                    return bmp;
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        bmp.Save(fileName, ImageFormat.Png);
+                        bmp.Save(stream, ImageFormat.Png);
+
+                        File.WriteAllText("last index.txt", imagecounter.ToString());
+
+                        return stream.ToArray();
+                    }
+
+
 
 
                 }
@@ -77,7 +87,7 @@ namespace udpServerr
 
 
             var Ip = IPAddress.Parse("192.168.100.8");
-            var Port = 54709;
+            var Port = 65001;
 
             var listenerEP = new IPEndPoint(Ip, Port);
 
@@ -91,15 +101,24 @@ namespace udpServerr
             EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
 
 
-            
-            len = listener.ReceiveFrom(buffer, ref remoteEP);
-
-            msg = Encoding.Default.GetString(buffer, 0, len);
-            if(msg=="Salam")
+            while(true)
             {
-                Bitmap image = CaptureAndSaveScreenshot();
+                len = listener.ReceiveFrom(buffer, ref remoteEP);
+
+                msg = Encoding.Default.GetString(buffer, 0, len);
+                if(msg=="Salam")
+                {
+                    byte[] image = CaptureAndSaveScreenshot();
+                    listener.SendTo(image, new IPEndPoint(Ip, Port));
+
+
+
+
+
+                }
+                Console.WriteLine($"{remoteEP} : {msg}");
             }
-            Console.WriteLine($"{remoteEP} : {msg}");
+
             
         }
     }
