@@ -21,43 +21,17 @@ namespace UdpClient
 {
     public partial class MainWindow : Window
     {
+        private System.Net.Sockets.UdpClient client = new System.Net.Sockets.UdpClient(27002);
         public MainWindow()
         {
             InitializeComponent();
 
-            ReceiveScreenshot();
 
             
 
         }
 
-        private async void ReceiveScreenshot()
-        {
-
-            var listener = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-            var Ip = IPAddress.Parse("192.168.100.8");
-            var Port = 65002;
-
-            var remoteEP = new IPEndPoint(Ip, Port);
-            listener.Bind(remoteEP);
-
-            var msg = "";
-            var len = 0;
-            var buffer = Array.Empty<byte>();
-
-            EndPoint remoteEPServer = new IPEndPoint(IPAddress.Any, 0);
-
-            await Task.Run(() => {
-                while (true)
-                {
-                    listener.ReceiveFrom(buffer, ref remoteEPServer);
-                    MessageBox.Show(buffer.Length.ToString());
-                    
-                    ClientImage.Source= ByteToImage(buffer);
-                }
-            });
-        }
+        
 
         BitmapImage ByteToImage(byte[]byteArray)
         {
@@ -68,30 +42,63 @@ namespace UdpClient
                 bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
                 bitmapImage.StreamSource = stream;
                 bitmapImage.EndInit();
-                bitmapImage.Freeze(); // Freeze the BitmapImage to make it read-only and thread-safe
+                bitmapImage.Freeze();
             }
             return bitmapImage;
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            var client = new Socket(AddressFamily.InterNetwork,
-                          SocketType.Dgram,
-                          ProtocolType.Udp);
 
-
-            var Ip = IPAddress.Parse("192.168.100.8");
-            var Port = 65001;
-
-            var remoteEP = new IPEndPoint(Ip, Port);
-
+            var remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 27001);
+            var buffer = new byte[ushort.MaxValue - 29];
+            await client.SendAsync(buffer, buffer.Length, remoteEP);
+            var list = new List<byte>();
+            var maxlen = buffer.Length;
             var len = 0;
-            var buffer = Array.Empty<byte>();
-
-      
-            buffer = Encoding.Default.GetBytes(txtbx.Text);
-            client.SendTo(buffer, remoteEP);
-
             
+                while (true)
+                {
+                    var result = await client.ReceiveAsync();
+                    list.AddRange(result.Buffer);
+                    if (result.Buffer.Length != maxlen) break;
+                }
+
+                ClientImage.Source = ByteToImage(list.ToArray());
+                list.Clear();
+
+
+            //var client = new Socket(AddressFamily.InterNetwork,
+            //              SocketType.Dgram,
+            //              ProtocolType.Udp);
+
+
+            //var Ip = IPAddress.Parse("127.0.0.1");
+            //var Port = 27001;
+
+            //var remoteEP = new IPEndPoint(Ip, Port);
+
+            //var len = 0;
+            //var buffer = new byte[ushort.MaxValue - 29];
+
+
+            //buffer = Encoding.Default.GetBytes(txtbx.Text);
+            //client.SendTo(buffer, remoteEP);
+
+            //await client.SendToAsync(buffer, SocketFlags.None, remoteEP);
+            //var list = new List<byte>();
+            //var maxlen = buffer.Length;
+            //while (true)
+            //{
+            //    while (true)
+            //    {
+            //        var result = await client.ReceiveFromAsync();
+            //        list.AddRange(result.Buffer);
+            //        if (result.Buffer.Length != maxlen) break;
+            //    }
+
+            //    ClientImage.Source = ByteToImage(list.ToArray());
+            //    list.Clear();
+            //}
         }
     }
 }
